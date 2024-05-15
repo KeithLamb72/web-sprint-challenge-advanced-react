@@ -43,7 +43,7 @@ describe('AppFunctional Component Tests', () => {
       fireEvent.click(screen.getByRole('button', { name: /submit/i }));
 
       // Wait for the response message to appear and verify it
-      expect(await screen.findByText(/test win #28|Error submitting email/i)).toBeInTheDocument();
+      expect(await screen.findByText(/lady win #45|Error submitting email/i)).toBeInTheDocument();
     });
   });
 });
