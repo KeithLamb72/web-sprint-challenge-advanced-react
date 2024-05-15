@@ -24,7 +24,7 @@ describe('AppFunctional Component Tests', () => {
     test('move B right and check position and steps', () => {
       fireEvent.click(screen.getByText('RIGHT'));
       expect(screen.getByText(/coordinates/i)).toHaveTextContent('Coordinates (3,2)');
-      expect(screen.getByText(/you moved/i)).toHaveTextContent('You moved 1 time');
+      expect(screen.getByText(/you moved/i)).toHaveTextContent('You moved 1 times');
     });
 
     test('try to move B out of bounds to the right', () => {
