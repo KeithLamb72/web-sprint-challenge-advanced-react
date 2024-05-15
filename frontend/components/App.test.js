@@ -1,4 +1,3 @@
-// App.test.js
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';  // Ensures jest-dom matchers are imported
@@ -6,16 +5,11 @@ import AppFunctional from './AppFunctional'; // Correct import path
 
 describe('AppFunctional Component Tests', () => {
   beforeEach(() => {
-    // Utilizing beforeEach to render the component for every test to ensure test isolation
+    // Render the component before each test for isolation
     render(<AppFunctional />);
   });
 
-  test('sanity', () => {
-    expect(true).toBe(true); // Basic truth test to ensure testing is working
-  });
-
   test('initial render and default state', () => {
-    // Directly checking texts on render
     expect(screen.getByText(/coordinates/i)).toHaveTextContent('Coordinates (2,2)');
     expect(screen.getByText(/you moved/i)).toHaveTextContent('You moved 0 times');
   });
@@ -24,7 +18,7 @@ describe('AppFunctional Component Tests', () => {
     test('move B right and check position and steps', () => {
       fireEvent.click(screen.getByText('RIGHT'));
       expect(screen.getByText(/coordinates/i)).toHaveTextContent('Coordinates (3,2)');
-      expect(screen.getByText(/you moved/i)).toHaveTextContent('You moved 1 times');
+      expect(screen.getByText(/you moved/i)).toHaveTextContent('You moved 1 time');
     });
 
     test('try to move B out of bounds to the right', () => {
@@ -37,16 +31,19 @@ describe('AppFunctional Component Tests', () => {
 
   test('reset button functionality', () => {
     fireEvent.click(screen.getByText('UP')); // Move up to change state
-    fireEvent.click(screen.getByText('RESET'));
+    fireEvent.click(screen.getByText('reset'));
     expect(screen.getByText(/coordinates/i)).toHaveTextContent('Coordinates (2,2)');
     expect(screen.getByText(/you moved/i)).toHaveTextContent('You moved 0 times');
   });
 
   describe('Form Submission Handling', () => {
     test('submit form with valid email and check server response', async () => {
-      fireEvent.change(screen.getByPlaceholderText('Type email'), { target: { value: 'test@example.com' } });
-      fireEvent.click(screen.getByText('SUBMIT'));
-      expect(await screen.findByText('Success')).toBeInTheDocument();
+      // Set the value of the email input and submit the form
+      fireEvent.change(screen.getByPlaceholderText('type email'), { target: { value: 'test@example.com' } });
+      fireEvent.click(screen.getByRole('button', { name: /submit/i }));
+
+      // Wait for the response message to appear and verify it
+      expect(await screen.findByText('test win #28')).toBeInTheDocument();
     });
   });
 });
