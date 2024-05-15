@@ -5,8 +5,9 @@ export default function AppFunctional(props) {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [steps, setSteps] = useState(0);
+  const [showHSInfo, setShowHSInfo] = useState(true);  // State to toggle HS Info visibility
 
-  const stepsText = steps === 1 ? "You moved 1 time" : `You moved ${steps} times`
+  const stepsText = steps === 1 ? "You moved 1 time" : `You moved ${steps} times`;
 
   const limitMessages = {
     up: "You can't go up",
@@ -21,7 +22,7 @@ export default function AppFunctional(props) {
 
   const getXYMessage = () => {
     const { x, y } = getXY();
-    return `Coordinates (${x}, ${y})`;
+    return `Coordinates (${x},${y})`;
   };
 
   const reset = () => {
@@ -29,7 +30,8 @@ export default function AppFunctional(props) {
     setEmail('');
     setMessage('');
     setSteps(0);
-  };
+    setShowHSInfo(true);  // Reset also shows the HS Info div
+  }; 
 
   const getNextIndex = (direction) => {
     const row = Math.floor(index / 3);
@@ -52,6 +54,7 @@ export default function AppFunctional(props) {
       setIndex(newIndex);
       setSteps(prevSteps => prevSteps + 1);
       setMessage('');
+      setShowHSInfo(false);  // Hide HS Info on any move
     }
   };
 
@@ -62,10 +65,12 @@ export default function AppFunctional(props) {
   const onSubmit = async (evt) => {
     evt.preventDefault();
     if (!email) {
-      setMessage("Please enter an email.");
+      setMessage("Ouch: email is required");
       return;
     }
-    const payload = { x: getXY().x, y: getXY().y, steps, email };
+    // Added resetting logic here
+    reset(); // Reset state after submission regardless of success
+    const payload = { x: getXY().x,y: getXY().y, steps, email };
     try {
       const response = await fetch('http://localhost:9000/api/result', {
         method: 'POST',
@@ -85,6 +90,11 @@ export default function AppFunctional(props) {
         <h3 id="coordinates">{getXYMessage()}</h3>
         <h3 id="steps">{stepsText}</h3>
         <h3 id="message">{message}</h3>
+        {showHSInfo && (
+          <div className="hs-info">
+            
+          </div>
+        )}
       </div>
       <div id="grid">
         {[...Array(9)].map((_, idx) => (
@@ -93,6 +103,7 @@ export default function AppFunctional(props) {
           </div>
         ))}
       </div>
+      <div className="info"><h3>{}</h3></div>
       <div id="keypad">
         <button id="left" onClick={move}>LEFT</button>
         <button id="up" onClick={move}>UP</button>
@@ -102,7 +113,7 @@ export default function AppFunctional(props) {
       </div>
       <form onSubmit={onSubmit}>
         <input id="email" type="email" value={email} onChange={onChange} placeholder="Type email" />
-        <input id="submit" type="submit" />
+        <input id="submit" type="submit" onClick={reset}/>
       </form>
     </div>
   );
